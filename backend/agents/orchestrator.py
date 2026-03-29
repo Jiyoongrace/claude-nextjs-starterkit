@@ -33,7 +33,7 @@ async def run_scenario(request: AgentRunRequest) -> Any:
             f"에러코드 {error_code} 방지를 위해 폭 {width}mm, 두께 {thickness}mm 기준으로 "
             f"최적 파라미터 조합을 탐색하세요. 폭과 두께를 조금씩 변경하며 3가지 이상 조합을 시도하세요."
         )
-        return result.data
+        return result.output
 
     if s == "S2":
         from agents.simulator_agent import simulator_s2
@@ -42,7 +42,7 @@ async def run_scenario(request: AgentRunRequest) -> Any:
         result = await simulator_s2.run(
             f"Edging 기준 변경 '{edging_value}' 에 따른 후공정 파급 효과를 분석하세요."
         )
-        return result.data
+        return result.output
 
     if s == "S3":
         from agents.tracer_agent import tracer_s3
@@ -54,7 +54,7 @@ async def run_scenario(request: AgentRunRequest) -> Any:
             f"Job ID '{job_id}'의 비정상 종료 원인을 추적하세요. "
             f"기간: {date_from} ~ {date_to}. 의심 커밋을 is_suspect=true로 표시하세요."
         )
-        return result.data
+        return result.output
 
     if s == "S4":
         from agents.rag_agent import rag_s4
@@ -63,7 +63,7 @@ async def run_scenario(request: AgentRunRequest) -> Any:
         result = await rag_s4.run(
             f"'{term}' 용어의 정의와 관련 화면/DB/API 매핑을 Wiki에서 검색하세요."
         )
-        return result.data
+        return result.output
 
     if s == "S5":
         from agents.tracer_agent import tracer_s5
@@ -75,7 +75,7 @@ async def run_scenario(request: AgentRunRequest) -> Any:
             f"신규 공장 '{factory_name}' 신설 시 영향받는 소스·기준·서비스 컴포넌트를 "
             f"그래프로 탐색하세요. 연동 대상: {systems if systems else '전체 시스템'}"
         )
-        return result.data
+        return result.output
 
     if s == "S6":
         from agents.rag_agent import rag_s6
@@ -87,7 +87,7 @@ async def run_scenario(request: AgentRunRequest) -> Any:
             f"신청자 '{requester}'의 화면 '{screen_id}' 에 대한 "
             f"'{permission_level}' 권한 신청 결재 초안을 런북 기반으로 생성하세요."
         )
-        return result.data
+        return result.output
 
     if s == "S7":
         from agents.tracer_agent import tracer_s7
@@ -100,7 +100,7 @@ async def run_scenario(request: AgentRunRequest) -> Any:
         )
 
         # diff_keys 자동 계산 보정 (에이전트가 누락할 경우 대비)
-        data = result.data
+        data = result.output
         if isinstance(data, MsaDiffResult) and not data.diff_keys:
             data.diff_keys = find_diff_keys(data.rows_a, data.rows_b)
         return data

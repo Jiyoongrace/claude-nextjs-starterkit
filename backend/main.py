@@ -9,6 +9,10 @@
     8000 — FastAPI 백엔드 (이 파일)
     3000 — Next.js 프론트엔드
 """
+# .env 로드를 가장 먼저 실행 — 에이전트 임포트 전에 환경변수가 세팅되어야 함
+from dotenv import load_dotenv
+load_dotenv()
+
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware

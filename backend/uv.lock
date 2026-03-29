@@ -1644,7 +1644,7 @@ requires-dist = [
     { name = "httpx", specifier = ">=0.28.0" },
     { name = "neo4j", specifier = ">=5.27.0" },
     { name = "pydantic", specifier = ">=2.10.0" },
-    { name = "pydantic-ai", specifier = ">=0.0.15" },
+    { name = "pydantic-ai", extras = ["google", "groq"], specifier = ">=0.0.15" },
     { name = "pydantic-settings", specifier = ">=2.7.0" },
     { name = "python-dotenv", specifier = ">=1.0.0" },
     { name = "python-frontmatter", specifier = ">=1.1.0" },

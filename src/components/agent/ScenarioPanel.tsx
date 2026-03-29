@@ -15,6 +15,7 @@ interface Props {
 export function ScenarioPanel({ scenarioId }: Props) {
   const { setMode } = useWorkspace()
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const scenario = SCENARIOS.find(s => s.id === scenarioId)!
 
   // 각 시나리오별 폼 파라미터 상태
@@ -41,14 +42,21 @@ export function ScenarioPanel({ scenarioId }: Props) {
 
   async function handleRun() {
     setLoading(true)
+    setError(null)
     try {
       const res = await fetch("/api/agent/run", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ scenario_id: scenarioId, params }),
       })
-      const result: AgentResponse = await res.json()
-      setMode({ type: "result", scenarioId, result })
+      const data = await res.json()
+      if (!res.ok) {
+        setError(data.detail ?? `오류 발생 (${res.status})`)
+        return
+      }
+      setMode({ type: "result", scenarioId, result: data as AgentResponse })
+    } catch (e) {
+      setError("서버에 연결할 수 없습니다.")
     } finally {
       setLoading(false)
     }
@@ -185,6 +193,13 @@ export function ScenarioPanel({ scenarioId }: Props) {
           )}
         </div>
       </div>
+
+      {/* 에러 메시지 */}
+      {error && (
+        <div className="shrink-0 mx-6 mb-2 rounded-md bg-destructive/10 px-4 py-2 text-sm text-destructive">
+          {error}
+        </div>
+      )}
 
       {/* 실행 버튼 */}
       <div className="shrink-0 border-t px-6 py-4">

@@ -7,21 +7,15 @@ ReAct 패턴:
 """
 import os
 from pydantic_ai import Agent
-from pydantic_ai.models.anthropic import AnthropicModel
 from models.response_models import SimulationResult, RippleEffectResult, TimelineItem
 
-
-def _get_model() -> AnthropicModel:
-    return AnthropicModel(
-        os.getenv("CLAUDE_MODEL", "claude-sonnet-4-20250514"),
-        api_key=os.getenv("ANTHROPIC_API_KEY", ""),
-    )
-
+_MODEL = os.getenv("CLAUDE_MODEL", "anthropic:claude-sonnet-4-20250514")
 
 # ─── S1: DG320 에러 방지 파라미터 탐색 ─────────────────────────────────────────
 simulator_s1 = Agent(
-    model=_get_model(),
-    result_type=SimulationResult,
+    model=_MODEL,
+    output_type=SimulationResult,
+    output_retries=3,
     system_prompt="""
 당신은 열연 공정 시뮬레이션 전문 AI 에이전트입니다.
 DG320 에러(단중 초과) 방지를 위한 최적 파라미터 조합을 탐색합니다.
@@ -51,8 +45,9 @@ async def run_dg320_simulation(width: float, thickness: float) -> dict:
 
 # ─── S2: Edging 기준 변경 파생 효과 분석 ────────────────────────────────────────
 simulator_s2 = Agent(
-    model=_get_model(),
-    result_type=RippleEffectResult,
+    model=_MODEL,
+    output_type=RippleEffectResult,
+    output_retries=3,
     system_prompt="""
 당신은 열연 공정 파급 효과 분석 전문 AI 에이전트입니다.
 Edging 기준 변경이 후공정에 미치는 파급 효과를 분석합니다.

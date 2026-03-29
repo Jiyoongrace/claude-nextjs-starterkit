@@ -8,23 +8,17 @@ dependencies = [
     # 웹 프레임워크
     "fastapi>=0.115.0",
     "uvicorn[standard]>=0.32.0",
-
     # AI 에이전트
-    "pydantic-ai>=0.0.15",
-
+    "pydantic-ai[google,groq]>=0.0.15",
     # 데이터 검증
     "pydantic>=2.10.0",
     "pydantic-settings>=2.7.0",
-
     # 그래프 DB
     "neo4j>=5.27.0",
-
     # 벡터 DB
     "chromadb>=0.6.0",
-
     # 마크다운/프론트매터 파싱
     "python-frontmatter>=1.1.0",
-
     # 유틸리티
     "python-dotenv>=1.0.0",
     "httpx>=0.28.0",

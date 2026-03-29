@@ -8,21 +8,15 @@ ReAct 패턴:
 """
 import os
 from pydantic_ai import Agent
-from pydantic_ai.models.anthropic import AnthropicModel
 from models.response_models import GitTimelineResult, GraphPathResult, MsaDiffResult
 
-
-def _get_model() -> AnthropicModel:
-    return AnthropicModel(
-        os.getenv("CLAUDE_MODEL", "claude-sonnet-4-20250514"),
-        api_key=os.getenv("ANTHROPIC_API_KEY", ""),
-    )
-
+_MODEL = os.getenv("CLAUDE_MODEL", "anthropic:claude-sonnet-4-20250514")
 
 # ─── S3: Slab Job 비정상 종료 원인 추적 ─────────────────────────────────────────
 tracer_s3 = Agent(
-    model=_get_model(),
-    result_type=GitTimelineResult,
+    model=_MODEL,
+    output_type=GitTimelineResult,
+    output_retries=3,
     system_prompt="""
 당신은 Git 이력 분석 전문 AI 에이전트입니다.
 Slab 설계 Job 비정상 종료의 원인이 된 커밋을 탐지합니다.
@@ -52,8 +46,9 @@ async def parse_git_log(job_id: str, date_from: str, date_to: str) -> list:
 
 # ─── S5: 열연공장 신설 영향도 파악 ──────────────────────────────────────────────
 tracer_s5 = Agent(
-    model=_get_model(),
-    result_type=GraphPathResult,
+    model=_MODEL,
+    output_type=GraphPathResult,
+    output_retries=3,
     system_prompt="""
 당신은 시스템 영향도 분석 전문 AI 에이전트입니다.
 신규 공장 설비 추가 시 영향받는 소스·기준·서비스를 그래프로 탐색합니다.
@@ -82,8 +77,9 @@ async def traverse_factory_impact(factory_name: str, target_systems: list) -> di
 
 # ─── S7: MSA 대기량 불일치 추적 ──────────────────────────────────────────────────
 tracer_s7 = Agent(
-    model=_get_model(),
-    result_type=MsaDiffResult,
+    model=_MODEL,
+    output_type=MsaDiffResult,
+    output_retries=3,
     system_prompt="""
 당신은 MSA 데이터 정합성 분석 전문 AI 에이전트입니다.
 두 서비스 DB 간 대기량 불일치를 탐지합니다.

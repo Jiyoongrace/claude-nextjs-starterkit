@@ -7,21 +7,16 @@ ReAct 패턴:
 """
 import os
 from pydantic_ai import Agent
-from pydantic_ai.models.anthropic import AnthropicModel
 from models.response_models import WikiResult
 
-
-def _get_model() -> AnthropicModel:
-    return AnthropicModel(
-        os.getenv("CLAUDE_MODEL", "claude-sonnet-4-20250514"),
-        api_key=os.getenv("ANTHROPIC_API_KEY", ""),
-    )
+_MODEL = os.getenv("CLAUDE_MODEL", "anthropic:claude-sonnet-4-20250514")
 
 
 # ─── S4: 비즈니스 용어 질의 ──────────────────────────────────────────────────────
 rag_s4 = Agent(
-    model=_get_model(),
-    result_type=WikiResult,
+    model=_MODEL,
+    output_type=WikiResult,
+    output_retries=3,
     system_prompt="""
 당신은 제조 현장 Wiki 검색 전문 AI 에이전트입니다.
 비즈니스 용어, 에러코드, 현장 절차에 대한 정확한 정의를 제공합니다.
@@ -49,8 +44,9 @@ async def search_term(query: str) -> dict:
 
 # ─── S6: IRMS 권한 신청 가이드 ───────────────────────────────────────────────────
 rag_s6 = Agent(
-    model=_get_model(),
-    result_type=WikiResult,
+    model=_MODEL,
+    output_type=WikiResult,
+    output_retries=3,
     system_prompt="""
 당신은 IRMS 권한 신청 절차 전문 AI 에이전트입니다.
 런북을 기반으로 사용자가 제출할 결재 초안을 자동 생성합니다.
